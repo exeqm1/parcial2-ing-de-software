@@ -1,0 +1,13 @@
+@startuml
+actor "Representante" as R
+control "Sistema" as Sys
+entity "InformeRotura" as IR
+entity "PedidoObra" as PO
+
+R -> Sys: buscarInformesPorPrioridad()
+Sys -> IR: getInformes()
+Sys --> R: lista de informes
+R -> Sys: elaborarPedidoObra(informe)
+Sys -> PO: new PedidoObra(fecha=now, fechaRep=now.plusDays(7))
+Sys -> IR: setPedidoObra(po)
+@enduml

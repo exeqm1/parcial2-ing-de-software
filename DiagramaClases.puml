@@ -1,0 +1,111 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+enum EstadoBache {
+    SIN_REPARAR
+    REPARADO
+}
+
+enum NombreBrigada {
+    ALFA
+    BRAVO
+    DELTA
+    RICO_CHET
+}
+
+class DepartamentoObrasPublicas {
+    - ciudadanos: List<Ciudadano>
+    - baches: List<Bache>
+    - informes: List<InformeRotura>
+    - pedidos: List<PedidoObra>
+    - brigadas: List<Brigada>
+    - trabajadores: List<Trabajador>
+    + informesPorCiudadano(c: Ciudadano): List<InformeRotura>
+    + informesSinPedidos(): List<InformeRotura>
+    + informeBrigadasOciosas(): List<Brigada>
+    + pedidosPorBrigada(b: Brigada): List<PedidoObra>
+    + bachesSinReparar(): List<Bache>
+    + trabajadoresPorBrigada(b: Brigada): List<Trabajador>
+    + registrarReparacion(pedido: PedidoObra, fecha: LocalDate, observaciones: String): void
+}
+
+class Ciudadano {
+    - nombre: String
+    - mail: String
+    - password: int
+    + Ciudadano()
+    + Ciudadano(nombre: String, mail: String, password: int)
+    + validarIngreso(psw: int): boolean
+    + cambioPassword(newPass: String): void
+    + delay(mili: int): void
+    + ciudadanosDiferentes(c2: Ciudadano): boolean
+}
+
+class Bache {
+    - idBache: int
+    - tamano: double
+    - calleA: String
+    - calleB: String
+    - altura: int
+    - barrio: String
+    - prioridad: int
+    - estado: EstadoBache
+    + Bache(idBache: int, tamano: double, calleA: String, calleB: String, altura: int, barrio: String, prioridad: int)
+}
+
+class InformeRotura {
+    - codInf: int
+    - fechaInforme: LocalDate
+    - problema: String
+    - codigoUrgencia: int
+    - bache: Bache
+    - ciudadano: Ciudadano
+    - pedidoObra: PedidoObra
+    + InformeRotura(codInf: int, problema: String, codigoUrgencia: int, bache: Bache, ciudadano: Ciudadano)
+}
+
+class PedidoObra {
+    - nroPedido: int
+    - ubicacion: String
+    - tamano: double
+    - fechaCreacion: LocalDate
+    - fechaReparacion: LocalDate
+    - observaciones: String
+    - brigada: Brigada
+    + PedidoObra(nroPedido: int, ubicacion: String, tamano: double, observaciones: String)
+    + finalizarObra(fecha: LocalDate, observaciones: String): void
+}
+
+class Brigada {
+    - nroBrigada: int
+    - nombre: NombreBrigada
+    - cantTrabajadores: int
+    - equipamiento: String
+    - materiales: String
+    - trabajadores: List<Trabajador>
+    - jefe: Trabajador
+    - estaLibre: boolean
+    + Brigada(nroBrigada: int, nombre: NombreBrigada, equipamiento: String, materiales: String)
+    + liberar(): void
+}
+
+class Trabajador {
+    - id: int
+    - nombre: String
+    - puesto: String
+    - ocupado: boolean
+    + Trabajador(id: int, nombre: String, puesto: String, ocupado: boolean)
+}
+
+DepartamentoObrasPublicas "1" --> "0..*" Ciudadano : gestiona
+DepartamentoObrasPublicas "1" --> "0..*" Bache : gestiona
+DepartamentoObrasPublicas "1" --> "0..*" InformeRotura : gestiona
+DepartamentoObrasPublicas "1" --> "0..*" PedidoObra : gestiona
+
+Ciudadano "1" -down-> "0..*" InformeRotura : denuncia >
+Bache "1" <-down- "0..*" InformeRotura : referido en <
+InformeRotura "1" *-right-> "0..1" PedidoObra : genera >
+PedidoObra "0..*" <-down- "1" Brigada : asignada a <
+Brigada "1" *-down-> "3" Trabajador : conforman >
+Brigada "1" *-down-> "1" Trabajador : jefe >
+@enduml

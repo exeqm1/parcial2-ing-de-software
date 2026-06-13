@@ -1,0 +1,14 @@
+@startuml
+control "Cron Diario" as Cron
+control "Sistema" as Sys
+entity "PedidoObra" as PO
+entity "Brigada" as Bri
+actor "Jefe de Brigada" as Jefe
+
+Cron -> Sys: procesarPedidosDelDia()
+Sys -> PO: buscarPedidosDelDia()
+Sys -> Bri: buscarBrigadaLibre()
+Sys -> PO: asignarBrigada(brigada)
+Sys -> Jefe: entregarPedido(pedidoObra, 3 trabajadores)
+Jefe -> PO: setFechaFinalObra(fecha)
+@enduml
